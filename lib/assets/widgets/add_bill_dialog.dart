@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pay_bill/assets/classes/classes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:intl/intl.dart'; // Importe o pacote intl
 
 class AddBillDialog extends StatefulWidget {
   final void Function(Conta) onPressed;
@@ -12,12 +13,11 @@ class AddBillDialog extends StatefulWidget {
 }
 
 class _AddBillDialogState extends State<AddBillDialog> {
-  bool isPaid = false; // Atualizado para isPaid
+  bool isPaid = false;
 
   final nomeController = TextEditingController();
   final dataVencimentoFormatter = MaskTextInputFormatter(
-      mask: '##/##/####',
-      filter: {"#": RegExp(r'[0-9]')}); // Use um MaskTextInputFormatter aqui
+      mask: '##/##/####', filter: {"#": RegExp(r'[0-9]')});
   final valorController = TextEditingController();
 
   @override
@@ -26,7 +26,6 @@ class _AddBillDialogState extends State<AddBillDialog> {
       title: const Text('Adicionar Conta',
           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(
-        // Adicionado para evitar overflow se a tela for pequena
         child: ListBody(
           children: <Widget>[
             TextField(
@@ -36,17 +35,15 @@ class _AddBillDialogState extends State<AddBillDialog> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 10), // Espaço entre os campos
+            const SizedBox(height: 10),
             TextField(
-              inputFormatters: [
-                dataVencimentoFormatter
-              ], // Use o formatador aqui
+              inputFormatters: [dataVencimentoFormatter],
               decoration: const InputDecoration(
                 labelText: "Data de Vencimento",
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 10), // Espaço entre os campos
+            const SizedBox(height: 10),
             TextField(
               controller: valorController,
               decoration: const InputDecoration(
@@ -56,15 +53,15 @@ class _AddBillDialogState extends State<AddBillDialog> {
               ),
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 10), // Espaço entre os campos
+            const SizedBox(height: 10),
             Row(
               children: <Widget>[
                 const Text("Pago:"),
                 Checkbox(
-                  value: isPaid, // Atualizado para isPaid
+                  value: isPaid,
                   onChanged: (bool? value) {
                     setState(() {
-                      isPaid = value ?? false; // Atualizado para isPaid
+                      isPaid = value ?? false;
                     });
                   },
                 ),
@@ -77,12 +74,20 @@ class _AddBillDialogState extends State<AddBillDialog> {
         TextButton(
           child: const Text('Adicionar', style: TextStyle(color: Colors.blue)),
           onPressed: () {
-            var novaConta = Conta(
-                nomeController.text,
-                DateTime.parse(dataVencimentoFormatter
-                    .getUnmaskedText()), // Use getUnmaskedText() aqui
-                double.parse(valorController.text),
-                isPaid); // Atualizado para isPaid
+            print('Botão Salvar pressionado');
+
+            // Divida a data de vencimento em dia, mês e ano
+            List<String> dataVencimentoParts =
+                dataVencimentoFormatter.getUnmaskedText().split('/');
+            int dia = int.parse(dataVencimentoParts[0]);
+            int mes = int.parse(dataVencimentoParts[1]);
+            int ano = int.parse(dataVencimentoParts[2]);
+
+            // Crie uma nova instância de DateTime
+            DateTime dataVencimento = DateTime(ano, mes, dia);
+
+            var novaConta = Conta(nomeController.text, dataVencimento,
+                double.parse(valorController.text), isPaid);
 
             widget.onPressed(novaConta);
 

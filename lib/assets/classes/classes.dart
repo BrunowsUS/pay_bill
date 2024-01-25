@@ -11,7 +11,7 @@ class Conta {
   }
 
   bool isValueGreaterThan(double comparisonValue) {
-    return this.valor > comparisonValue;
+    return valor > comparisonValue;
   }
 
   static double calculateTotalPaid(List<Conta> contas) {

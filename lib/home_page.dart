@@ -8,6 +8,7 @@ class ContasApp extends StatefulWidget {
   const ContasApp({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ContasAppState createState() => _ContasAppState();
 }
 
@@ -64,16 +65,16 @@ class _ContasAppState extends State<ContasApp> {
               itemBuilder: (context, index) {
                 return Card(
                   color: contas[index].isPaid ? Colors.green.shade100 : null,
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 10.0),
+                    padding: const EdgeInsets.only(bottom: 10.0),
                     child: ListTile(
                       title: Row(
                         children: <Widget>[
                           Text(contas[index].nome),
                           if (DateTime.now()
                               .isAfter(contas[index].dataVencimento))
-                            Text(
+                            const Text(
                               " - VENCIDO",
                               style: TextStyle(
                                   color: Colors.red,
@@ -85,13 +86,13 @@ class _ContasAppState extends State<ContasApp> {
                         text: TextSpan(
                           style: DefaultTextStyle.of(context).style,
                           children: <TextSpan>[
-                            TextSpan(
+                            const TextSpan(
                                 text: 'Vencimento: ',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             TextSpan(
                                 text:
                                     '${DateFormat('dd/MM/yyyy').format(contas[index].dataVencimento)}, '),
-                            TextSpan(
+                            const TextSpan(
                                 text: 'Valor: R\$ ',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             TextSpan(text: '${contas[index].valor}'),
@@ -101,7 +102,7 @@ class _ContasAppState extends State<ContasApp> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text(
+                          const Text(
                             "Pago?",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -114,30 +115,30 @@ class _ContasAppState extends State<ContasApp> {
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.edit),
+                            icon: const Icon(Icons.edit),
                             onPressed: () {
                               // Abra o diálogo de edição aqui
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                             onPressed: () {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Confirmação'),
-                                    content: Text(
+                                    title: const Text('Confirmação'),
+                                    content: const Text(
                                         'Você tem certeza que deseja deletar esta conta?'),
                                     actions: <Widget>[
                                       TextButton(
-                                        child: Text('Cancelar'),
+                                        child: const Text('Cancelar'),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
                                       ),
                                       TextButton(
-                                        child: Text('Deletar'),
+                                        child: const Text('Deletar'),
                                         onPressed: () {
                                           setState(() {
                                             contas.removeAt(
