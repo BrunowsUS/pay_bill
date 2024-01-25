@@ -1,83 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:pay_bill/assets/classes/classes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:intl/intl.dart';
 
 class AddBillDialog extends StatefulWidget {
   final void Function(Conta) onPressed;
-  final Conta? conta;
 
-  const AddBillDialog({Key? key, required this.onPressed, this.conta})
-      : super(key: key);
+  const AddBillDialog({super.key, required this.onPressed});
 
   @override
   State<AddBillDialog> createState() => _AddBillDialogState();
 }
 
 class _AddBillDialogState extends State<AddBillDialog> {
-  late bool isPaid;
-  late TextEditingController nomeController;
-  late MaskTextInputFormatter dataVencimentoFormatter;
-  late TextEditingController valorController;
+  bool isPaid = false; // Atualizado para isPaid
 
-  @override
-  void initState() {
-    super.initState();
-    isPaid = widget.conta?.isPaid ?? false;
-    nomeController = TextEditingController(text: widget.conta?.nome);
-    dataVencimentoFormatter = MaskTextInputFormatter(
+  final nomeController = TextEditingController();
+  final dataVencimentoFormatter = MaskTextInputFormatter(
       mask: '##/##/####',
-      filter: {"#": RegExp(r'[0-9]')},
-      initialText: widget.conta != null
-          ? DateFormat('dd/MM/yyyy').format(widget.conta!.dataVencimento)
-          : '',
-    );
-    valorController =
-        TextEditingController(text: widget.conta?.valor.toString());
-  }
+      filter: {"#": RegExp(r'[0-9]')}); // Use um MaskTextInputFormatter aqui
+  final valorController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Adicionar Conta',
+      title: const Text('Adicionar Conta',
           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(
+        // Adicionado para evitar overflow se a tela for pequena
         child: ListBody(
           children: <Widget>[
             TextField(
               controller: nomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Nome",
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10), // Espaço entre os campos
             TextField(
-              inputFormatters: [dataVencimentoFormatter],
-              decoration: InputDecoration(
+              inputFormatters: [
+                dataVencimentoFormatter
+              ], // Use o formatador aqui
+              decoration: const InputDecoration(
                 labelText: "Data de Vencimento",
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10), // Espaço entre os campos
             TextField(
               controller: valorController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Valor",
                 prefixText: 'R\$ ',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10), // Espaço entre os campos
             Row(
               children: <Widget>[
-                Text("Pago:"),
+                const Text("Pago:"),
                 Checkbox(
-                  value: isPaid,
+                  value: isPaid, // Atualizado para isPaid
                   onChanged: (bool? value) {
                     setState(() {
-                      isPaid = value ?? false;
+                      isPaid = value ?? false; // Atualizado para isPaid
                     });
                   },
                 ),
@@ -88,13 +75,14 @@ class _AddBillDialogState extends State<AddBillDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('Salvar', style: TextStyle(color: Colors.blue)),
+          child: const Text('Adicionar', style: TextStyle(color: Colors.blue)),
           onPressed: () {
             var novaConta = Conta(
                 nomeController.text,
-                DateTime.parse(dataVencimentoFormatter.getUnmaskedText()),
+                DateTime.parse(dataVencimentoFormatter
+                    .getUnmaskedText()), // Use getUnmaskedText() aqui
                 double.parse(valorController.text),
-                isPaid);
+                isPaid); // Atualizado para isPaid
 
             widget.onPressed(novaConta);
 

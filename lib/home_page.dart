@@ -26,8 +26,7 @@ class _ContasAppState extends State<ContasApp> {
       appBar: AppBar(
         title: Text(
           'Gerenciador de Contas',
-          style: GoogleFonts.robotoSlab(
-              fontWeight: FontWeight.bold, color: Colors.white),
+          style: GoogleFonts.robotoSlab(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blue,
         centerTitle: true,
@@ -117,19 +116,7 @@ class _ContasAppState extends State<ContasApp> {
                           IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AddBillDialog(
-                                    onPressed: (contaEditada) {
-                                      setState(() {
-                                        contas[index] = contaEditada;
-                                      });
-                                    },
-                                    conta: contas[index],
-                                  );
-                                },
-                              );
+                              // Abra o diálogo de edição aqui
                             },
                           ),
                           IconButton(
