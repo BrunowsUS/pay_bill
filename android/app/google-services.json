@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "595163256812",
+    "project_id": "paybill-gerenciadordecontas",
+    "storage_bucket": "paybill-gerenciadordecontas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595163256812:android:831893a612f8f18ce852c9",
+        "android_client_info": {
+          "package_name": "com.example.pay_bill"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJAMloG5RihT0Ibvve6k0G-BMovoEU2SI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

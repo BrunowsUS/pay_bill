@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:pay_bill/assets/classes/classes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:intl/intl.dart'; // Importe o pacote intl
 
 class AddBillDialog extends StatefulWidget {
   final void Function(Conta) onPressed;
 
-  const AddBillDialog({super.key, required this.onPressed});
+  const AddBillDialog({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   State<AddBillDialog> createState() => _AddBillDialogState();
 }
 
 class _AddBillDialogState extends State<AddBillDialog> {
-  bool isPaid = false;
+  bool isPaid = false; // Atualizado para isPaid
 
   final nomeController = TextEditingController();
-  final dataVencimentoFormatter = MaskTextInputFormatter(
-      mask: '##/##/####', filter: {"#": RegExp(r'[0-9]')});
+  final dataVencimentoController =
+      TextEditingController(); // Use um MaskTextInputFormatter aqui
   final valorController = TextEditingController();
 
   @override
@@ -26,6 +25,7 @@ class _AddBillDialogState extends State<AddBillDialog> {
       title: const Text('Adicionar Conta',
           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(
+        // Adicionado para evitar overflow se a tela for pequena
         child: ListBody(
           children: <Widget>[
             TextField(
@@ -35,15 +35,15 @@ class _AddBillDialogState extends State<AddBillDialog> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 10), // Espaço entre os campos
             TextField(
-              inputFormatters: [dataVencimentoFormatter],
+              controller: dataVencimentoController,
               decoration: const InputDecoration(
                 labelText: "Data de Vencimento",
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 10), // Espaço entre os campos
             TextField(
               controller: valorController,
               decoration: const InputDecoration(
@@ -53,15 +53,15 @@ class _AddBillDialogState extends State<AddBillDialog> {
               ),
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 10), // Espaço entre os campos
             Row(
               children: <Widget>[
                 const Text("Pago:"),
                 Checkbox(
-                  value: isPaid,
+                  value: isPaid, // Atualizado para isPaid
                   onChanged: (bool? value) {
                     setState(() {
-                      isPaid = value ?? false;
+                      isPaid = value ?? false; // Atualizado para isPaid
                     });
                   },
                 ),
@@ -78,7 +78,7 @@ class _AddBillDialogState extends State<AddBillDialog> {
 
             // Divida a data de vencimento em dia, mês e ano
             List<String> dataVencimentoParts =
-                dataVencimentoFormatter.getUnmaskedText().split('/');
+                dataVencimentoController.text.split('/');
             int dia = int.parse(dataVencimentoParts[0]);
             int mes = int.parse(dataVencimentoParts[1]);
             int ano = int.parse(dataVencimentoParts[2]);
@@ -92,7 +92,7 @@ class _AddBillDialogState extends State<AddBillDialog> {
             widget.onPressed(novaConta);
 
             nomeController.clear();
-            dataVencimentoFormatter.clear();
+            dataVencimentoController.clear();
             valorController.clear();
 
             Navigator.of(context).pop();
