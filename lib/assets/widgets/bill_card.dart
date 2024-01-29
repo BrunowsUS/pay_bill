@@ -27,12 +27,19 @@ class BillCard extends StatelessWidget {
         child: ListTile(
           title: Row(
             children: <Widget>[
-              Text(conta.nome),
+              Text(
+                conta.nome,
+                style: TextStyle(
+                  color: Colors.purple, // Change the color to purple
+                ),
+              ),
               if (DateTime.now().isAfter(conta.dataVencimento))
                 const Text(
                   " - VENCIDO",
-                  style:
-                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
             ],
           ),

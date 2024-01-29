@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pay_bill/assets/Firebase/bill_repository.dart';
 import 'package:pay_bill/assets/classes/classes.dart';
 import 'package:pay_bill/assets/widgets/add_bill_dialog.dart';
 import 'package:pay_bill/assets/widgets/bill_card.dart';
@@ -14,6 +15,7 @@ class ContasApp extends StatefulWidget {
 
 class _ContasAppState extends State<ContasApp> {
   List<Conta> contas = [];
+  final BillRepository billRepository = BillRepository();
 
   void adicionarConta(Conta conta) {
     setState(() {
@@ -29,88 +31,122 @@ class _ContasAppState extends State<ContasApp> {
           conta: conta,
           onPressed: (Conta updatedConta) {
             setState(() {
-              int index = contas.indexOf(conta);
-              contas[index] = updatedConta;
+              billRepository.updateConta(updatedConta);
             });
           },
         );
       },
     );
   }
+
   void deletarConta(Conta conta) {
     setState(() {
       contas.remove(conta);
     });
   }
+
   void alterarStatusPago(bool? value, Conta conta) {
     setState(() {
       conta.isPaid = value ?? false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Gerenciador de Contas',
-          style: GoogleFonts.robotoSlab(fontWeight: FontWeight.bold),
+          style: GoogleFonts.robotoSlab(
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // Change the color to white
+          ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.purple, // Change the color to purple
         centerTitle: true,
         elevation: 8.0,
       ),
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('Total pago:',
-                    style: GoogleFonts.roboto(fontWeight: FontWeight.bold)),
-                Text('R\$ ${Conta.calculateTotalPaid(contas)}',
-                    style: GoogleFonts.roboto()),
-              ],
-            ),
+          Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0), // Increase padding
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Total pago:',
+                        style: GoogleFonts.roboto(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0, // Increase font size
+                          color: Colors.purple, // Change the color to purple
+                        )),
+                    Text('R\$ ${Conta.calculateTotalPaid(contas)}',
+                        style: GoogleFonts.roboto(
+                          fontSize: 18.0, // Increase font size
+                          color: Colors.purple, // Change the color to purple
+                        )),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0), // Increase padding
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Total não pago:',
+                        style: GoogleFonts.roboto(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0, // Increase font size
+                          color: Colors.purple, // Change the color to purple
+                        )),
+                    Text('R\$ ${Conta.calculateTotalUnpaid(contas)}',
+                        style: GoogleFonts.roboto(
+                          fontSize: 18.0, // Increase font size
+                          color: Colors.purple, // Change the color to purple
+                        )),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: contas.length,
+                  itemBuilder: (context, index) {
+                    return BillCard(
+                      conta: contas[index],
+                      onEdited: editarConta,
+                      onDeleted: deletarConta,
+                      onPaidStatusChanged: alterarStatusPago,
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('Total não pago:',
-                    style: GoogleFonts.roboto(fontWeight: FontWeight.bold)),
-                Text('R\$ ${Conta.calculateTotalUnpaid(contas)}',
-                    style: GoogleFonts.roboto()),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: contas.length,
-              itemBuilder: (context, index) {
-                return BillCard(
-                  conta: contas[index],
-                  onEdited: editarConta,
-                  onDeleted: deletarConta,
-                  onPaidStatusChanged: alterarStatusPago,
-                );
-              },
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: 16.0), // Add some padding from the bottom
+              child: FloatingActionButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AddBillDialog(
+                          onPressed: adicionarConta,
+                        );
+                      });
+                },
+                child: const Icon(Icons.add),
+                backgroundColor: Colors.purple, // Change the color to purple
+                elevation: 12.0, // Increase shadow
+                splashColor:
+                    Colors.grey, // Add splash color for click animation
+              ),
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AddBillDialog(
-                  onPressed: adicionarConta,
-                );
-              });
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

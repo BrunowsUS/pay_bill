@@ -24,6 +24,16 @@ class _AddBillDialogState extends State<AddBillDialog> {
   void initState() {
     super.initState();
 
+    dataVencimentoController.addListener(() {
+      var text = dataVencimentoController.text;
+      if (text.length == 2 || text.length == 5) {
+        dataVencimentoController.text = text + '/';
+        dataVencimentoController.selection = TextSelection.fromPosition(
+          TextPosition(offset: dataVencimentoController.text.length),
+        );
+      }
+    });
+
     if (widget.conta != null) {
       nomeController.text = widget.conta!.nome;
       dataVencimentoController.text =
@@ -38,7 +48,10 @@ class _AddBillDialogState extends State<AddBillDialog> {
     return AlertDialog(
       title: Text(
         widget.conta == null ? 'Adicionar Conta' : 'Editar Conta',
-        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: Colors.purple, // Change the color to purple
+          fontWeight: FontWeight.bold,
+        ),
       ),
       content: SingleChildScrollView(
         child: ListBody(
@@ -89,23 +102,42 @@ class _AddBillDialogState extends State<AddBillDialog> {
         TextButton(
           child: Text(
             widget.conta == null ? 'Adicionar' : 'Salvar',
-            style: TextStyle(color: Colors.blue),
+            style: const TextStyle(color: Colors.blue),
           ),
           onPressed: () {
             print('Botão Salvar pressionado');
 
             List<String> dataVencimentoParts =
                 dataVencimentoController.text.split('/');
-            int dia = int.parse(dataVencimentoParts[0]);
-            int mes = int.parse(dataVencimentoParts[1]);
-            int ano = int.parse(dataVencimentoParts[2]);
+            if (dataVencimentoParts.length != 3) {
+              print('Data de vencimento inválida');
+              return;
+            }
+            int? dia = int.tryParse(dataVencimentoParts[0]);
+            int? mes = int.tryParse(dataVencimentoParts[1]);
+            int? ano = int.tryParse(dataVencimentoParts[2]);
+
+            if (dia == null || mes == null || ano == null) {
+              print('Data de vencimento inválida');
+              return;
+            }
 
             DateTime dataVencimento = DateTime(ano, mes, dia);
 
-            var novaConta = Conta(nomeController.text, dataVencimento,
-                double.parse(valorController.text), isPaid);
+            double? valor = double.tryParse(valorController.text);
+            if (valor == null) {
+              print('Valor inválido');
+              return;
+            }
 
-            widget.onPressed(novaConta);
+            Conta updatedConta = Conta(
+              nomeController.text,
+              dataVencimento,
+              valor,
+              isPaid,
+              id: widget.conta?.id,
+            );
+            widget.onPressed(updatedConta);
 
             nomeController.clear();
             dataVencimentoController.clear();

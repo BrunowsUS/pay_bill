@@ -1,18 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Conta {
+  String? id;
   String nome;
   DateTime dataVencimento;
   double valor;
   bool isPaid;
 
-  Conta(this.nome, this.dataVencimento, this.valor, this.isPaid);
+  Conta(this.nome, this.dataVencimento, this.valor, this.isPaid, {this.id});
 
-  bool stringToBool(String str) {
-    return str.toLowerCase() == 'true';
+  // Converte um Conta para um Map
+  Map<String, dynamic> toMap() {
+    return {
+      'nome': nome,
+      'dataVencimento': dataVencimento,
+      'valor': valor,
+      'isPaid': isPaid,
+    };
   }
 
-  bool isValueGreaterThan(double comparisonValue) {
-    return valor > comparisonValue;
-  }
+  // Cria um Conta a partir de um documento do Firestore
+  Conta.fromSnapshot(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        nome = snapshot['nome'],
+        dataVencimento = (snapshot['dataVencimento'] as Timestamp).toDate(),
+        valor = snapshot['valor'],
+        isPaid = snapshot['isPaid'];
 
   static double calculateTotalPaid(List<Conta> contas) {
     return contas
